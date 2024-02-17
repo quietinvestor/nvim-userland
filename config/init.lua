@@ -111,6 +111,11 @@ cmp.setup({
     -- Scroll up and down in the completion documentation
     ['<C-u>'] = cmp.mapping.scroll_docs(-4),
     ['<C-d>'] = cmp.mapping.scroll_docs(4),
+
+    -- Supertab
+    -- https://lsp-zero.netlify.app/v3.x/autocomplete.html#enable-super-tab
+    ['<Tab>'] = cmp_action.luasnip_supertab(),
+    ['<S-Tab>'] = cmp_action.luasnip_shift_supertab(),
   }),
   -- note: if you are going to use lsp-kind (another plugin)
   -- replace the line below with the function from lsp-kind
