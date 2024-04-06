@@ -37,26 +37,33 @@ require('lazy').setup({
       local configs = require("nvim-treesitter.configs")
 
       configs.setup({
-          ensure_installed = {
-            'bash',
-            'c',
-            'dockerfile',
-            'json',
-            'lua',
-            'markdown_inline',
-            'puppet',
-            'python',
-            'terraform',
-            'vim',
-            'vimdoc',
-            'yaml'
-          },
-          sync_install = false,
-          highlight = { enable = true },
-          indent = { enable = true },
-        })
+        ensure_installed = {
+          'bash',
+          'c',
+          'dockerfile',
+          'json',
+          'lua',
+          'markdown_inline',
+          'puppet',
+          'python',
+          'terraform',
+          'vim',
+          'vimdoc',
+          'yaml',
+        },
+        sync_install = false,
+        highlight = { enable = true },
+        indent = { enable = true },
+      })
     end
-   }
+  },
+  {
+    'windwp/nvim-autopairs',
+    event = "InsertEnter",
+    config = true
+    -- use opts = {} for passing setup options
+    -- this is equalent to setup({}) function
+  },
 })
 
 -- Set colorscheme
@@ -149,6 +156,14 @@ cmp.setup({
   -- replace the line below with the function from lsp-kind
   formatting = lsp_zero.cmp_format(),
 })
+
+-- nvim-autopairs
+-- If you want insert `(` after select function or method item
+local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+cmp.event:on(
+  'confirm_done',
+  cmp_autopairs.on_confirm_done()
+)
 
 -- meta-accessors
 local o = vim.o
