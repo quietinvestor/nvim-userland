@@ -4,7 +4,7 @@ USER root
 
 RUN apt update && \
     apt install -y \
-    curl=7.81.0-1ubuntu1.15 \
+    curl=7.81.0-1ubuntu1.16 \
     git=1:2.34.1-1ubuntu1.10 \
     unzip=6.0-26ubuntu3.1 && \
     cd /opt/ && \
