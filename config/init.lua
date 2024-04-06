@@ -30,6 +30,33 @@ require('lazy').setup({
   {'hrsh7th/cmp-path'},
   {'saadparwaiz1/cmp_luasnip'},
   {'rafamadriz/friendly-snippets'},
+  {
+    "nvim-treesitter/nvim-treesitter",
+    build = ":TSUpdate",
+    config = function ()
+      local configs = require("nvim-treesitter.configs")
+
+      configs.setup({
+          ensure_installed = {
+            'bash',
+            'c',
+            'dockerfile',
+            'json',
+            'lua',
+            'markdown_inline',
+            'puppet',
+            'python',
+            'terraform',
+            'vim',
+            'vimdoc',
+            'yaml'
+          },
+          sync_install = false,
+          highlight = { enable = true },
+          indent = { enable = true },
+        })
+    end
+   }
 })
 
 -- Set colorscheme
@@ -59,7 +86,8 @@ require('mason-lspconfig').setup({
     'dockerls',
     'jsonls',
     'lua_ls',
-    'ltex',
+    'marksman',
+    'puppet',
     'pyright',
     'terraformls',
     'vimls',
@@ -121,4 +149,14 @@ cmp.setup({
   -- replace the line below with the function from lsp-kind
   formatting = lsp_zero.cmp_format(),
 })
+
+-- meta-accessors
+local o = vim.o
+
+-- global options
+o.cursorline = true -- Highlight selected line
+o.tabstop = 4 -- Use 4 spaces when tab is pressed
+o.shiftwidth = 4 -- Use 4 spaces for indentation
+o.expandtab = true -- Spaces are used in indents
+o.number = true -- Add line numbers
 
