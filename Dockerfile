@@ -43,4 +43,6 @@ RUN export NVM_DIR="$HOME/.nvm" && \
     nvim --headless +"Lazy! sync" +qa && \
     nvim --headless +"LspInstall $lsp_servers" +qa
 
+RUN echo "\nexport PROMPT_DIRTRIM=1" >> /home/$username/.bashrc
+
 ENTRYPOINT ["/bin/bash"]
