@@ -40,7 +40,10 @@ require('lazy').setup({
         ensure_installed = {
           'bash',
           'c',
+          'css',
           'dockerfile',
+          'html',
+          'javascript',
           'json',
           'lua',
           'markdown_inline',
@@ -90,13 +93,16 @@ require('mason-lspconfig').setup({
   ensure_installed = {
     'bashls',
     'clangd',
+    'cssls',
     'dockerls',
+    'html',
     'jsonls',
     'lua_ls',
     'marksman',
     'puppet',
     'pyright',
     'terraformls',
+    'tsserver',
     'vimls',
     'yamlls'
   },
