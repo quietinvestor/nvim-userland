@@ -8,6 +8,8 @@ RUN apt update && \
     curl=8.5.0-2ubuntu10.1 \
     git=1:2.43.0-1ubuntu7.1 \
     golang=2:1.22~2build1 \
+    python3=3.12.3-0ubuntu1 \
+    python-is-python3=3.11.4-1 \
     unzip=6.0-28ubuntu4 && \
     cd /opt/ && \
     curl -LO https://github.com/neovim/neovim/releases/download/v0.10.0/nvim-linux64.tar.gz && \
