@@ -9,7 +9,7 @@ RUN apt update && \
     git=1:2.43.0-1ubuntu7.1 \
     unzip=6.0-28ubuntu4 && \
     cd /opt/ && \
-    curl -LO https://github.com/neovim/neovim/releases/download/v0.9.5/nvim-linux64.tar.gz && \
+    curl -LO https://github.com/neovim/neovim/releases/download/v0.10.0/nvim-linux64.tar.gz && \
     tar -zxvf nvim-linux64.tar.gz --one-top-level && \
     rm nvim-linux64.tar.gz && \
     ln -s /opt/nvim-linux64/bin/nvim /usr/local/bin/nvim
