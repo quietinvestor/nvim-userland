@@ -4,10 +4,10 @@ USER root
 
 RUN apt update && \
     apt install -y \
-    build-essential=12.9ubuntu3 \
-    curl=7.81.0-1ubuntu1.16 \
-    git=1:2.34.1-1ubuntu1.10 \
-    unzip=6.0-26ubuntu3.1 && \
+    build-essential=12.10ubuntu1 \
+    curl=8.5.0-2ubuntu10.1 \
+    git=1:2.43.0-1ubuntu7.1 \
+    unzip=6.0-28ubuntu4 && \
     cd /opt/ && \
     curl -LO https://github.com/neovim/neovim/releases/download/v0.9.5/nvim-linux64.tar.gz && \
     tar -zxvf nvim-linux64.tar.gz --one-top-level && \
