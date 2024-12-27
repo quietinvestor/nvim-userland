@@ -9,7 +9,6 @@ RUN apt-get update && \
     git=1:2.43.0-1ubuntu7.1 \
     gnupg=2.4.4-2ubuntu17 \
     jq=1.7.1-3build1 \
-    #    ninja-build=1.11.1-2 \
     software-properties-common=0.99.49.1 \
     unzip=6.0-28ubuntu4.1 && \
     rm -rf /var/lib/apt/lists/*
