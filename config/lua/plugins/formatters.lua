@@ -7,6 +7,7 @@ return {
 			c = { "clang-format" },
 			cmake = { "cmake_format" },
 			css = { "prettier" },
+			github_actions = { "prettier" },
 			go = { "gofumpt" },
 			html = { "prettier" },
 			javascript = { "prettier" },

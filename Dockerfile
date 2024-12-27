@@ -105,21 +105,18 @@ RUN useradd --create-home --shell /bin/bash dev
 
 # 15. Switch to non-root user.
 USER dev
-
-# 16.
 WORKDIR /home/dev
 
-# 17. Creat directory for Neovim config.
+# 16. Creat directory for Neovim config.
 RUN mkdir -p .config/nvim
 
-# 18. Copy config to image.
+# 17. Copy config to image.
 COPY --chown=dev:dev config/ .config/nvim/
 
-# 19. Install all plugins, LSPs, formatters and linters.
+# 18. Install all plugins, LSPs, formatters and linters.
 RUN nvim --headless +"Lazy! sync" +qa && \
     nvim --headless +"MasonToolsUpdateSync" +qa && \
     SERVERS=$(nvim --headless +"lua vim.print(table.concat(require('lazy.core.config').spec.plugins['mason-lspconfig.nvim'].opts.ensure_installed, ' '))" +qa 2>&1) && \
     nvim --headless +"LspInstall ${SERVERS}" +qa
 
-# 20.
 ENTRYPOINT ["/bin/bash"]

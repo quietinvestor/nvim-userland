@@ -32,6 +32,29 @@ return {
 				},
 			})
 
+			-- YAML LSP specific configuration
+			lspconfig.yamlls.setup({
+				capabilities = capabilities,
+				on_attach = on_attach,
+				filetypes = { "yaml", "github_actions" },
+				settings = {
+					yaml = {
+						schemaStore = {
+							enable = true,
+						},
+						schemas = {
+							["https://json.schemastore.org/github-workflow.json"] = "/.github/workflows/*",
+							["https://json.schemastore.org/github-action.json"] = "/.github/actions/**/action.yml",
+						},
+						validate = true,
+						format = { enable = true },
+						completion = {
+							completeFullyQualifiedKinds = true,
+						},
+					},
+				},
+			})
+
 			-- Configure other LSP servers
 			local servers = {
 				"bashls", -- Bash/Shell scripting
@@ -40,6 +63,7 @@ return {
 				"cssls", -- CSS
 				"dockerls", -- Dockerfile
 				"gopls", -- Go
+				"helm_ls", -- Helm
 				"html", -- HTML
 				"ts_ls", -- TypeScript/JavaScript
 				"jqls", -- JQ
@@ -49,8 +73,6 @@ return {
 				"pyright", -- Python
 				"sqls", -- SQL
 				"terraformls", -- Terraform/HCL
-				"yamlls", -- YAML
-				"helm_ls", -- Helm
 			}
 
 			for _, lsp in ipairs(servers) do

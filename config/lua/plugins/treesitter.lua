@@ -31,11 +31,15 @@ return {
 				"vimdoc",
 				"yaml",
 			},
-			highlight = { enable = true },
+			highlight = {
+				enable = true,
+				additional_vim_regex_highlighting = false,
+			},
 			ignore_install = {},
 			indent = { enable = true },
 			modules = {},
 			sync_install = false,
 		})
+		vim.treesitter.language.register("yaml", "github_actions")
 	end,
 }
