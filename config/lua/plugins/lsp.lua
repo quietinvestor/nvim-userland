@@ -9,11 +9,13 @@ return {
 		config = function()
 			-- LSP Configuration
 			local capabilities = require("cmp_nvim_lsp").default_capabilities()
+			local on_attach = require("config.keymaps")
 
 			-- Lua LSP specific configuration
 			local lspconfig = require("lspconfig")
 			lspconfig.lua_ls.setup({
 				capabilities = capabilities,
+				on_attach = on_attach,
 				settings = {
 					Lua = {
 						diagnostics = {
@@ -54,6 +56,7 @@ return {
 			for _, lsp in ipairs(servers) do
 				lspconfig[lsp].setup({
 					capabilities = capabilities,
+					on_attach = on_attach,
 				})
 			end
 		end,
