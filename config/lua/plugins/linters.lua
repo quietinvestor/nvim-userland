@@ -8,6 +8,7 @@ return {
 			cmake = { "cmakelint", "cmakelang" },
 			css = { "stylelint" },
 			dockerfile = { "hadolint" },
+			github_actions = { "yamllint", "actionlint" },
 			go = { "golangcilint" },
 			html = { "htmlhint" },
 			javascript = { "eslint_d" },
@@ -18,7 +19,7 @@ return {
 			python = { "ruff", "mypy" },
 			sql = { "sqlfluff" },
 			terraform = { "tflint" },
-			yaml = { "yamllint", "actionlint" },
+			yaml = { "yamllint" },
 		}
 
 		-- Create an autocommand to trigger linting

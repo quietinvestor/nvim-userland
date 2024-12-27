@@ -1,3 +1,11 @@
+-- Set GitHub actions file type detection
+vim.filetype.add({
+	pattern = {
+		[".*/%.github/workflows/.*%.ya?ml"] = "github_actions",
+		[".*/%.github/actions/.*%.ya?ml"] = "github_actions",
+	},
+})
+
 -- Set Helm file type detection
 vim.filetype.add({
 	extension = {

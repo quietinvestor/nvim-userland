@@ -14,7 +14,6 @@ return {
 	},
 	{
 		"williamboman/mason-lspconfig.nvim",
-		event = { "BufReadPre", "BufNewFile" },
 		dependencies = {
 			"neovim/nvim-lspconfig", -- Base LSP support
 			"williamboman/mason.nvim", -- Ensure mason loads first
@@ -35,7 +34,7 @@ return {
 				"marksman", -- Markdown
 				"puppet", -- Puppet
 				"pyright", -- Python
-				"sqls", -- SQL
+				--"sqls", -- SQL -- Temporarliy disabled as installation with :LspInstall fails for v0.2.28
 				"terraformls", -- Terraform
 				"yamlls", -- YAML
 				"helm_ls", -- Helm
@@ -45,7 +44,6 @@ return {
 	},
 	{
 		"WhoIsSethDaniel/mason-tool-installer.nvim",
-		event = { "BufReadPre", "BufNewFile" },
 		dependencies = {
 			"williamboman/mason.nvim", -- Ensure mason loads first
 		},

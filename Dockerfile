@@ -1,53 +1,118 @@
-FROM localhost/ubuntu-userland:1.0.0
+# 1. Pull Ubuntu image.
+FROM ubuntu:24.04
 
-USER root
-
-RUN apt update && \
-    apt install -y \
-    build-essential=12.10ubuntu1 \
-    curl=8.5.0-2ubuntu10.1 \
+# 2. Install common utilities.
+RUN apt-get update && \
+    apt-get install -y \
+    apt-transport-https=2.7.14build2 \
+    curl=8.5.0-2ubuntu10.6 \
     git=1:2.43.0-1ubuntu7.1 \
-    golang=2:1.22~2build1 \
-    python3=3.12.3-0ubuntu1 \
+    gnupg=2.4.4-2ubuntu17 \
+    jq=1.7.1-3build1 \
+    #    ninja-build=1.11.1-2 \
+    software-properties-common=0.99.49.1 \
+    unzip=6.0-28ubuntu4.1 && \
+    rm -rf /var/lib/apt/lists/*
+
+# 3. Install C.
+RUN apt-get update && \
+    apt-get install -y \
+    build-essential=12.10ubuntu1 && \
+    rm -rf /var/lib/apt/lists/*
+
+# 4. Install Cmake.
+RUN apt-get update && \
+    apt-get install -y \
+    cmake=3.28.3-1build7 && \
+    rm -rf /var/lib/apt/lists/*
+
+# 5. Install Go.
+RUN apt-get update && \
+    apt-get install -y \
+    golang=2:1.22~2build1 && \
+    rm -rf /var/lib/apt/lists/*
+
+# 6. Install Helm.
+RUN curl https://baltocdn.com/helm/signing.asc | \
+    gpg --dearmor | \
+    tee /usr/share/keyrings/helm.gpg > /dev/null && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] \
+    https://baltocdn.com/helm/stable/debian/ all main" | \
+    tee /etc/apt/sources.list.d/helm-stable-debian.list && \
+    apt-get update && \
+    apt-get install -y \
+    helm=3.16.3-1 && \
+    rm -rf /var/lib/apt/lists/*
+
+# 7. Install Lua and luarocks.
+RUN apt-get update && \
+    apt-get install -y \
+    lua5.4=5.4.6-3build2 \
+    luarocks=3.8.0+dfsg1-1 && \
+    rm -rf /var/lib/apt/lists/*
+
+# 8. Install Nodejs and NPM.
+RUN apt-get update && \
+    apt-get install -y \
+    nodejs=18.19.1+dfsg-6ubuntu5 \
+    npm=9.2.0~ds1-2 && \
+    rm -rf /var/lib/apt/lists/*
+
+# 9. Install Python, pip and venv.
+RUN apt-get update && \
+    apt-get install -y \
+    python3=3.12.3-0ubuntu2 \
     python-is-python3=3.11.4-1 \
-    unzip=6.0-28ubuntu4 && \
-    cd /opt/ && \
-    curl -LO https://github.com/neovim/neovim/releases/download/v0.10.0/nvim-linux64.tar.gz && \
-    tar -zxvf nvim-linux64.tar.gz --one-top-level && \
-    rm nvim-linux64.tar.gz && \
-    ln -s /opt/nvim-linux64/bin/nvim /usr/local/bin/nvim
+    python3-pip=24.0+dfsg-1ubuntu1.1 \
+    python3-venv=3.12.3-0ubuntu2 && \
+    rm -rf /var/lib/apt/lists/*
 
-ARG username
+# 10. Install Ruby, gems and Puppet.
+RUN apt-get update && \
+    apt-get install -y \
+    ruby=1:3.2~ubuntu1 \
+    rubygems-integration=1.18 && \
+    gem install puppet:8.10.0 && \
+    rm -rf /var/lib/apt/lists/*
 
-USER $username
+# 11. Install Rust and cargo.
+RUN apt-get update && \
+    apt-get install -y \
+    rustc=1.75.0+dfsg0ubuntu1-0ubuntu7.1 && \
+    rm -rf /var/lib/apt/lists/*
 
-WORKDIR /home/$username
+# 12. Install Terraform.
+RUN curl https://apt.releases.hashicorp.com/gpg | \
+    gpg --dearmor | \
+    tee /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null && \
+    echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
+    https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
+    tee /etc/apt/sources.list.d/hashicorp.list && \
+    apt-get update && \
+    apt-get install -y \
+    terraform=1.10.3-1 && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p /home/$username/.config/nvim && \
-    mkdir -p /home/$username/.local/bin
+# 13. Install Neovim nightly.
+#     Version not pinned as it changes continuously.
+RUN add-apt-repository -y ppa:neovim-ppa/unstable && \
+    apt-get update && \
+    apt-get install -y neovim && \
+    rm -rf /var/lib/apt/lists/*
 
-ENV PATH="/home/$username/.local/bin:${PATH}"
+# 14.
+WORKDIR /root/
 
-COPY --chown=$username:$username config/init.lua /home/$username/.config/nvim/
+# 15.
+RUN mkdir -p .config/nvim
 
-RUN { curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash ; } && \
-    export NVM_DIR="$HOME/.nvm" && \
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && \
-    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" && \
-    nvm install 22.2.0 && \
-    npm install -g npm@10.8.1 && \
-    npm install -g typescript@5.4.5 && \
-    npm install tree-sitter-cli && \
-    ln -s $HOME/node_modules/tree-sitter-cli/tree-sitter $HOME/.local/bin/tree-sitter
+# 16.
+COPY config/ .config/nvim/
 
-ARG lsp_servers
-
-RUN export NVM_DIR="$HOME/.nvm" && \
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && \
-    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" && \
-    nvim --headless +"Lazy! sync" +qa && \
-    nvim --headless +"LspInstall $lsp_servers" +qa
-
-RUN echo "\nexport PROMPT_DIRTRIM=1" >> /home/$username/.bashrc
+# 17. Install all plugins, LSPs, formatters and linters.
+RUN nvim --headless +"Lazy! sync" +qa && \
+    nvim --headless +"MasonToolsUpdateSync" +qa && \
+    SERVERS=$(nvim --headless +"lua print(table.concat(require('plugins.mason')[2].opts.ensure_installed, ' '))" +qa 2>&1) && \
+    nvim --headless +"LspInstall ${SERVERS}" +qa
 
 ENTRYPOINT ["/bin/bash"]
