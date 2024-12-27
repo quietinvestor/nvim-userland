@@ -79,6 +79,7 @@ RUN apt-get update && \
 RUN apt-get update && \
     apt-get install -y \
     rustc=1.75.0+dfsg0ubuntu1-0ubuntu7.1 && \
+    cargo=1.75.0+dfsg0ubuntu1-0ubuntu7.1 && \
     rm -rf /var/lib/apt/lists/*
 
 # 12. Install Terraform.
