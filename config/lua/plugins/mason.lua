@@ -20,24 +20,23 @@ return {
 		},
 		opts = {
 			ensure_installed = {
-				"bashls", -- Bash
+				"bash-language-server", -- bashls -- Bash
 				"clangd", -- C/C++
-				"cmake", -- CMake
-				"cssls", -- CSS
-				"dockerls", -- Dockerfile
+				"css-lsp", -- cssls -- CSS
+				"dockerfile-language-server", -- dockerls -- Dockerfile
 				"gopls", -- Go
-				"html", -- HTML
-				"ts_ls", -- TypeScript/JavaScript
-				"jqls", -- JQ
-				"jsonls", -- JSON
-				"lua_ls", -- Lua
+				"html-lsp", -- html -- HTML
+				"typescript-language-server", -- ts_ls -- TypeScript/JavaScript
+				"jq-lsp", -- jqls -- JQ
+				"json-lsp", -- jsonls -- JSON
+				"lua-language-server", -- lua_ls -- Lua
 				"marksman", -- Markdown
-				"puppet", -- Puppet
+				"puppet-editor-services", -- puppet -- Puppet
 				"pyright", -- Python
-				--"sqls", -- SQL -- Temporarliy disabled as installation with :LspInstall fails for v0.2.28
-				"terraformls", -- Terraform
-				"yamlls", -- YAML
-				"helm_ls", -- Helm
+				"sqls", -- SQL
+				"terraform-ls", -- terraformls -- Terraform
+				"yaml-language-server", -- yamlls -- YAML
+				"helm-ls", -- helm_ls -- Helm
 			},
 			automatic_installation = true,
 		},
