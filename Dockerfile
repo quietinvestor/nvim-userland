@@ -1,5 +1,5 @@
-# 1. Pull Ubuntu image.
-FROM ubuntu:24.04@sha256:67efaecc0031a612cf7bb3c863407018dbbef0a971f62032b77aa542ac8ac0d2
+# 1. Pull Ubuntu image for builder.
+FROM ubuntu:24.04@sha256:67efaecc0031a612cf7bb3c863407018dbbef0a971f62032b77aa542ac8ac0d2 AS builder
 
 # 2. Set bash shell.
 SHELL ["/bin/bash", "-c"]
@@ -12,7 +12,10 @@ RUN apt-get update && \
     curl=8.5.0-2ubuntu10.8 \
     gpg=2.4.4-2ubuntu17.4 \
     jq=1.7.1-3ubuntu0.24.04.1 \
-    software-properties-common=0.99.49.4 \
+    python3=3.12.3-0ubuntu2.1 \
+    python-is-python3=3.11.4-1 \
+    python3-pip=24.0+dfsg-1ubuntu1.3 \
+    python3-venv=3.12.3-0ubuntu2.1 \
     unzip=6.0-28ubuntu4.1 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -31,54 +34,29 @@ RUN curl -fsSL https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz -o h
     install -m 0755 linux-amd64/helm /usr/local/bin/helm && \
     rm -rf helm.tar.gz linux-amd64
 
-# 6. Install Lua and luarocks.
-RUN apt-get update && \
-    apt-get install --no-install-recommends -y \
-    lua5.4=5.4.6-3build2 \
-    luarocks=3.8.0+dfsg1-1 && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# 6. Install Node.js and npm.
+ENV NODE_VERSION=v25.8.1
+RUN curl -fsSL https://nodejs.org/dist/${NODE_VERSION}/node-${NODE_VERSION}-linux-x64.tar.xz -o node.tar.xz && \
+    tar -xJf node.tar.xz -C /usr/local --strip-components=1 && \
+    rm -f node.tar.xz
 
-# 7. Install Nodejs and NPM.
-RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
-    apt-get install --no-install-recommends -y \
-    nodejs=22.22.2-1nodesource1 && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-# 8. Install Python, pip and venv.
-RUN apt-get update && \
-    apt-get install --no-install-recommends -y \
-    python3=3.12.3-0ubuntu2.1 \
-    python-is-python3=3.11.4-1 \
-    python3-pip=24.0+dfsg-1ubuntu1.3 \
-    python3-venv=3.12.3-0ubuntu2.1 && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-# 9. Install Ruby, gems and Puppet.
-RUN apt-get update && \
-    apt-get install --no-install-recommends -y \
-    ruby-full=1:3.2~ubuntu1 && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    gem install puppet:8.10.0
-
-# 10. Install Terraform.
+# 7. Configure Terraform apt repository.
 RUN curl https://apt.releases.hashicorp.com/gpg | \
     gpg --dearmor | \
     tee /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null && \
     echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
-    https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
-    tee /etc/apt/sources.list.d/hashicorp.list && \
-    apt-get update && \
+    https://apt.releases.hashicorp.com noble main" | \
+    tee /etc/apt/sources.list.d/hashicorp.list
+
+# 8. Install Terraform.
+RUN apt-get update && \
     apt-get install --no-install-recommends -y \
     terraform=1.14.7-1 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# 11. Install Neovim.
-ENV NVIM_VERSION=0.11.5
+# 9. Install Neovim.
+ENV NVIM_VERSION=0.12.0
 RUN curl -LO https://github.com/neovim/neovim/releases/download/v${NVIM_VERSION}/nvim-linux-x86_64.tar.gz && \
     tar -zxvf nvim-linux-x86_64.tar.gz && \
     mkdir -p /opt/nvim && \
@@ -86,31 +64,142 @@ RUN curl -LO https://github.com/neovim/neovim/releases/download/v${NVIM_VERSION}
     ln -s /opt/nvim/bin/nvim /usr/local/bin/nvim && \
     rm -rf nvim-linux-x86_64.tar.gz
 
-# 12. Create non-root user and home directory.
+# 10. Install Lua.
+ENV LUA_VERSION=5.4.8
+RUN curl -fsSL https://www.lua.org/ftp/lua-${LUA_VERSION}.tar.gz -o lua.tar.gz && \
+    tar -xzf lua.tar.gz && \
+    make -C lua-${LUA_VERSION} linux test && \
+    make -C lua-${LUA_VERSION} install && \
+    rm -rf lua.tar.gz lua-${LUA_VERSION}
+
+# 11. Install LuaRocks.
+ENV LUAROCKS_VERSION=3.13.0
+RUN curl -fsSL https://luarocks.org/releases/luarocks-${LUAROCKS_VERSION}.tar.gz -o luarocks.tar.gz && \
+    tar -xzf luarocks.tar.gz && \
+    cd luarocks-${LUAROCKS_VERSION} && \
+    ./configure --lua-version=5.4 && \
+    make && \
+    make install && \
+    cd / && \
+    rm -rf luarocks.tar.gz luarocks-${LUAROCKS_VERSION}
+
+# 12. Install Ruby.
+RUN apt-get update && \
+    apt-get install --no-install-recommends -y \
+    ruby-full=1:3.2~ubuntu1 && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# 13. Install Puppet gem.
+ENV PUPPET_VERSION=8.10.0
+RUN gem install --no-document puppet:${PUPPET_VERSION}
+
+# 14. Create non-root user and home directory.
 RUN useradd --create-home --shell /bin/bash dev
 
-# 13. Switch to non-root user.
+# 15. Switch to non-root user.
 USER dev
 WORKDIR /home/dev
 
-# 14. Install Rust and cargo.
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
+# 16. Install Rust and cargo.
+ENV RUST_VERSION=1.94.1
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain ${RUST_VERSION}
 ENV PATH="/home/dev/.cargo/bin:${PATH}"
 
-# 15. Set Go path.
+# 17. Set Go path.
 ENV PATH="/usr/local/go/bin:${PATH}"
 
-# 16. Create directory for Neovim config.
+# 18. Create directory for Neovim config.
 RUN mkdir -p .config/nvim
 
-# 17. Copy config to image.
+# 19. Copy config to image.
 COPY --chown=dev:dev config/ .config/nvim/
 
+# 20. Restore Neovim plugins.
+RUN nvim --headless +"Lazy! restore" +qa
 
-# 18. Install all plugins, LSPs, formatters and linters.
-RUN nvim --headless +"Lazy! restore" +qa && \
-    nvim --headless +"MasonToolsInstallSync" +qa && \
-    SERVERS=$(nvim --headless +"lua io.stdout:write(table.concat(require('lazy.core.config').spec.plugins['mason-lspconfig.nvim'].opts.ensure_installed, ' '))" +qa 2>/dev/null) && \
-    nvim --headless +"MasonInstall ${SERVERS}" +qa
+# 21. Install Mason tools.
+RUN nvim --headless +"MasonToolsInstallSync" +qa
+
+# 22. Install Mason LSP servers.
+ENV MASON_LSP_PACKAGES="bash-language-server clangd css-lsp dockerfile-language-server gopls helm-ls html-lsp jq-lsp json-lsp lua-language-server marksman puppet-editor-services pyright sqls terraform-ls typescript-language-server yaml-language-server"
+RUN nvim --headless +"MasonInstall ${MASON_LSP_PACKAGES}" +qa
+
+# 23. Pull Ubuntu image for runtime.
+FROM ubuntu:24.04@sha256:67efaecc0031a612cf7bb3c863407018dbbef0a971f62032b77aa542ac8ac0d2 AS final
+
+# 24. Set bash shell.
+SHELL ["/bin/bash", "-c"]
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
+ENV TERM=xterm-256color
+
+# 25. Install runtime utilities and shared libraries.
+RUN apt-get update && \
+    apt-get install --no-install-recommends -y \
+    curl=8.5.0-2ubuntu10.8 \
+    gcc=4:13.2.0-7ubuntu1 \
+    git=1:2.43.0-1ubuntu7.3 \
+    gpg=2.4.4-2ubuntu17.4 \
+    jq=1.7.1-3ubuntu0.24.04.1 \
+    libatomic1=14.2.0-4ubuntu2~24.04.1 \
+     python3=3.12.3-0ubuntu2.1 \
+     python-is-python3=3.11.4-1 \
+     python3-pip=24.0+dfsg-1ubuntu1.3 \
+     python3-venv=3.12.3-0ubuntu2.1 \
+     ripgrep=14.1.0-1 \
+     ruby-full=1:3.2~ubuntu1 \
+     unzip=6.0-28ubuntu4.1 \
+     wget=1.21.4-1ubuntu4.1 \
+     xdg-utils=1.1.3-4.1ubuntu3 && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# 26. Install tree-sitter CLI.
+ENV TREE_SITTER_CLI_VERSION=0.26.8
+RUN curl -fsSL https://github.com/tree-sitter/tree-sitter/releases/download/v${TREE_SITTER_CLI_VERSION}/tree-sitter-linux-x64.gz -o /tmp/tree-sitter.gz && \
+    echo "9754a32800f0b970152782df177b4a47c711e34e651a7aceb384d8bd29fa136e  /tmp/tree-sitter.gz" | sha256sum -c - && \
+    gunzip -c /tmp/tree-sitter.gz > /usr/local/bin/tree-sitter && \
+    chmod 0755 /usr/local/bin/tree-sitter && \
+    rm -f /tmp/tree-sitter.gz
+
+# 27. Create non-root user and home directory.
+RUN useradd --create-home --shell /bin/bash dev
+
+# 28. Copy system toolchains from builder.
+COPY --from=builder /usr/local/go /usr/local/go
+COPY --from=builder /usr/local/bin/helm /usr/local/bin/helm
+COPY --from=builder /usr/local/bin/node /usr/local/bin/node
+COPY --from=builder /usr/local/lib/node_modules /usr/local/lib/node_modules
+COPY --from=builder /usr/bin/terraform /usr/bin/terraform
+COPY --from=builder /opt/nvim /opt/nvim
+RUN ln -s /opt/nvim/bin/nvim /usr/local/bin/nvim
+RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm && \
+    ln -s /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
+
+# 29. Copy Lua runtimes from builder.
+COPY --from=builder /usr/local/bin/lua /usr/local/bin/lua
+COPY --from=builder /usr/local/bin/luac /usr/local/bin/luac
+COPY --from=builder /usr/local/bin/luarocks /usr/local/bin/luarocks
+COPY --from=builder /usr/local/bin/luarocks-admin /usr/local/bin/luarocks-admin
+COPY --from=builder /usr/local/share/lua /usr/local/share/lua
+COPY --from=builder /usr/local/lib/lua /usr/local/lib/lua
+
+# 30. Copy user-space toolchains and Neovim state from builder.
+COPY --from=builder --chown=dev:dev /home/dev/.cargo /home/dev/.cargo
+COPY --from=builder --chown=dev:dev /home/dev/.rustup /home/dev/.rustup
+COPY --from=builder --chown=dev:dev /home/dev/.config/nvim /home/dev/.config/nvim
+COPY --from=builder --chown=dev:dev /home/dev/.local/share/nvim /home/dev/.local/share/nvim
+COPY --from=builder --chown=dev:dev /home/dev/.cache/nvim /home/dev/.cache/nvim
+COPY --from=builder --chown=dev:dev /home/dev/.local/state/nvim /home/dev/.local/state/nvim
+
+# 31. Switch to non-root user.
+USER dev
+WORKDIR /home/dev
+
+# 32. Set paths.
+ENV CARGO_HOME="/home/dev/.cargo"
+ENV RUSTUP_HOME="/home/dev/.rustup"
+ENV PATH="/home/dev/.cargo/bin:/usr/local/go/bin:${PATH}"
 
 ENTRYPOINT ["/bin/bash"]

@@ -20,23 +20,23 @@ return {
 		},
 		opts = {
 			ensure_installed = {
-				"bash-language-server", -- bashls -- Bash
+				"bashls", -- Bash
 				"clangd", -- C/C++
-				"css-lsp", -- cssls -- CSS
-				"dockerfile-language-server", -- dockerls -- Dockerfile
+				"cssls", -- CSS
+				"dockerls", -- Dockerfile
 				"gopls", -- Go
-				"html-lsp", -- html -- HTML
-				"typescript-language-server", -- ts_ls -- TypeScript/JavaScript
-				"jq-lsp", -- jqls -- JQ
-				"json-lsp", -- jsonls -- JSON
-				"lua-language-server", -- lua_ls -- Lua
+				"html", -- HTML
+				"ts_ls", -- TypeScript/JavaScript
+				"jqls", -- JQ
+				"jsonls", -- JSON
+				"lua_ls", -- Lua
 				"marksman", -- Markdown
-				"puppet-editor-services", -- puppet -- Puppet
+				"puppet", -- Puppet
 				"pyright", -- Python
 				"sqls", -- SQL
-				"terraform-ls", -- terraformls -- Terraform
-				"yaml-language-server", -- yamlls -- YAML
-				"helm-ls", -- helm_ls -- Helm
+				"terraformls", -- Terraform
+				"yamlls", -- YAML
+				"helm_ls", -- Helm
 			},
 			automatic_installation = true,
 		},

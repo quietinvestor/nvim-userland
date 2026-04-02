@@ -7,13 +7,10 @@ return {
 		},
 		event = { "BufReadPre", "BufNewFile" },
 		config = function()
-			-- LSP Configuration
 			local capabilities = require("cmp_nvim_lsp").default_capabilities()
 			local on_attach = require("config.keymaps")
 
-			-- Lua LSP specific configuration
-			local lspconfig = require("lspconfig")
-			lspconfig.lua_ls.setup({
+			vim.lsp.config("lua_ls", {
 				capabilities = capabilities,
 				on_attach = on_attach,
 				settings = {
@@ -32,8 +29,7 @@ return {
 				},
 			})
 
-			-- YAML LSP specific configuration
-			lspconfig.yamlls.setup({
+			vim.lsp.config("yamlls", {
 				capabilities = capabilities,
 				on_attach = on_attach,
 				filetypes = { "yaml", "github_actions" },
@@ -55,7 +51,6 @@ return {
 				},
 			})
 
-			-- Configure other LSP servers
 			local servers = {
 				"bashls", -- Bash/Shell scripting
 				"clangd", -- C/C++
@@ -76,11 +71,15 @@ return {
 			}
 
 			for _, lsp in ipairs(servers) do
-				lspconfig[lsp].setup({
+				vim.lsp.config(lsp, {
 					capabilities = capabilities,
 					on_attach = on_attach,
 				})
 			end
+
+			vim.lsp.enable("lua_ls")
+			vim.lsp.enable("yamlls")
+			vim.lsp.enable(servers)
 		end,
 	},
 }
