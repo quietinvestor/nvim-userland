@@ -59,21 +59,21 @@ return {
 
 			local servers = {
 				"bashls", -- Bash/Shell scripting
+				"basedpyright", -- Python
+				"biome", -- JS/TS/CSS/JSON toolchain
 				"clangd", -- C/C++
-				"cmake", -- CMake
 				"cssls", -- CSS
 				"dockerls", -- Dockerfile
 				"gopls", -- Go
 				"helm_ls", -- Helm
 				"html", -- HTML
-				"ts_ls", -- TypeScript/JavaScript
 				"jqls", -- JQ
 				"jsonls", -- JSON
-				"marksman", -- Markdown
+				"markdown_oxide", -- Markdown
 				"puppet", -- Puppet
-				"pyright", -- Python
 				"sqls", -- SQL
 				"terraformls", -- Terraform/HCL
+				"vtsls", -- TypeScript/JavaScript
 			}
 
 			for _, lsp in ipairs(servers) do
