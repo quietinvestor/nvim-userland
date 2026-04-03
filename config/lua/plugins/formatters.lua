@@ -22,6 +22,7 @@ return {
 			puppet = { "puppet-lint" },
 			sql = { "sql_formatter" },
 			terraform = { "terraform_fmt" },
+			["terraform-vars"] = { "terraform_fmt" },
 			yaml = { "prettier" },
 		},
 		-- Set up format-on-save

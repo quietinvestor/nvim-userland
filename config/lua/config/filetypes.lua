@@ -1,11 +1,17 @@
 -- Set GitHub actions file type detection
 vim.filetype.add({
 	extension = {
+		epp = "epuppet",
+		pp = "puppet",
 		sh = "bash",
+		tfvars = "terraform-vars",
+	},
+	filename = {
+		["go.work"] = "gowork",
 	},
 	pattern = {
 		[".*/%.github/workflows/.*%.ya?ml"] = "github_actions",
-		[".*/%.github/actions/.*%.ya?ml"] = "github_actions",
+		[".*/%.github/actions/.*/action%.ya?ml"] = "yaml",
 	},
 })
 
@@ -18,6 +24,8 @@ vim.filetype.add({
 		[".*/templates/.*%.tpl"] = "helm",
 		[".*/templates/.*%.ya?ml"] = "helm",
 		["helmfile.*%.ya?ml"] = "helm",
+		[".*/values.*%.ya?ml"] = "yaml.helm-values",
+		["Chart%.ya?ml"] = "yaml.helm-values",
 	},
 })
 
@@ -41,8 +49,7 @@ local indentation = {
 	[4] = {
 		"bash",
 		"c",
-		"cmake",
-		"docker",
+		"dockerfile",
 		"go",
 		"gotmpl",
 		"jq",

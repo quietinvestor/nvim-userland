@@ -7,12 +7,7 @@ return {
 		lazy = false, -- Load during startup
 		priority = 900, -- Load early, but after coloscheme
 		opts = {
-			-- Temporary workaround until Mason supports
-			-- building cmake with python3.13
 			PATH = "prepend",
-			python = {
-				executable_path = "/usr/bin/python3.12",
-			},
 		},
 	},
 	{

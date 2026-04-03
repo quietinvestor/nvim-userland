@@ -2,6 +2,7 @@ return {
 	{
 		"saghen/blink.cmp",
 		version = "v1.10.1",
+		build = "cargo build --release",
 		event = "InsertEnter",
 		dependencies = {
 			"neovim/nvim-lspconfig",

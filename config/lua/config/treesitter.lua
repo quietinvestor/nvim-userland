@@ -2,7 +2,6 @@ return {
 	parsers = {
 		"bash",
 		"c",
-		"cmake",
 		"css",
 		"dockerfile",
 		"go",
