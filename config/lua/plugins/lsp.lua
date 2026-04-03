@@ -2,11 +2,11 @@ return {
 	{
 		"neovim/nvim-lspconfig",
 		dependencies = {
-			"hrsh7th/cmp-nvim-lsp", -- LSP source for nvim-cmp
-			"williamboman/mason.nvim", -- Ensure mason loads first
+			"mason-org/mason.nvim", -- Ensure mason loads first
+			"saghen/blink.cmp",
 		},
 		config = function()
-			local capabilities = require("cmp_nvim_lsp").default_capabilities()
+			local capabilities = require("blink.cmp").get_lsp_capabilities()
 			local on_attach = require("config.keymaps")
 
 			vim.lsp.config("lua_ls", {
