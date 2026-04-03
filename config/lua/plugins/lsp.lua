@@ -51,6 +51,12 @@ return {
 				},
 			})
 
+			vim.lsp.config("puppet", {
+				capabilities = capabilities,
+				on_attach = on_attach,
+				filetypes = { "puppet", "epuppet" },
+			})
+
 			local servers = {
 				"bashls", -- Bash/Shell scripting
 				"clangd", -- C/C++

@@ -1,5 +1,8 @@
 -- Set GitHub actions file type detection
 vim.filetype.add({
+	extension = {
+		sh = "bash",
+	},
 	pattern = {
 		[".*/%.github/workflows/.*%.ya?ml"] = "github_actions",
 		[".*/%.github/actions/.*%.ya?ml"] = "github_actions",

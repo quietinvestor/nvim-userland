@@ -22,7 +22,7 @@ return {
 		},
 		opts = {
 			ensure_installed = lspservers.lspconfig,
-			automatic_installation = true,
+			automatic_enable = false,
 		},
 	},
 		{
@@ -37,9 +37,6 @@ return {
 					{ "shfmt", version = "v3.13.0" }, -- formatter
 					-- C/C++
 					{ "clang-format", version = "22.1.2" }, -- formatter
-					-- CMake
-					{ "cmakelint", version = "1.4.3" }, -- linter
-					{ "cmakelang", version = "0.6.13?extra=YAML" }, -- formatter and linter
 					-- CSS
 					{ "stylelint", version = "17.6.0" }, -- linter
 					-- Docker

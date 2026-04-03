@@ -137,10 +137,12 @@ ENV TERM=xterm-256color
 # 25. Install runtime utilities and shared libraries.
 RUN apt-get update && \
     apt-get install --no-install-recommends -y \
+    clang-tidy=1:18.0-59~exp2 \
     curl=8.5.0-2ubuntu10.8 \
     gcc=4:13.2.0-7ubuntu1 \
     git=1:2.43.0-1ubuntu7.3 \
     jq=1.7.1-3ubuntu0.24.04.1 \
+    libicu74=74.2-1ubuntu3.1 \
     libatomic1=14.2.0-4ubuntu2~24.04.1 \
      python3=3.12.3-0ubuntu2.1 \
      python-is-python3=3.11.4-1 \
@@ -154,7 +156,15 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# 26. Install tree-sitter CLI.
+# 26. Install Puppet gem.
+ENV PUPPET_VERSION=8.10.0
+RUN gem install --no-document puppet:${PUPPET_VERSION}
+
+# 27. Install Puppet lint gem.
+ENV PUPPET_LINT_VERSION=5.1.1
+RUN gem install --no-document puppet-lint:${PUPPET_LINT_VERSION}
+
+# 28. Install tree-sitter CLI.
 ENV TREE_SITTER_CLI_VERSION=0.26.8
 RUN curl -fsSL https://github.com/tree-sitter/tree-sitter/releases/download/v${TREE_SITTER_CLI_VERSION}/tree-sitter-linux-x64.gz -o /tmp/tree-sitter.gz && \
     echo "9754a32800f0b970152782df177b4a47c711e34e651a7aceb384d8bd29fa136e  /tmp/tree-sitter.gz" | sha256sum -c - && \
@@ -162,10 +172,10 @@ RUN curl -fsSL https://github.com/tree-sitter/tree-sitter/releases/download/v${T
     chmod 0755 /usr/local/bin/tree-sitter && \
     rm -f /tmp/tree-sitter.gz
 
-# 27. Create non-root user and home directory.
+# 29. Create non-root user and home directory.
 RUN useradd --create-home --shell /bin/bash dev
 
-# 28. Copy system toolchains from builder.
+# 30. Copy system toolchains from builder.
 COPY --from=builder /usr/local/go /usr/local/go
 COPY --from=builder /usr/local/bin/helm /usr/local/bin/helm
 COPY --from=builder /usr/local/bin/node /usr/local/bin/node
@@ -176,7 +186,7 @@ RUN ln -s /opt/nvim/bin/nvim /usr/local/bin/nvim
 RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm && \
     ln -s /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
 
-# 29. Copy Lua runtimes from builder.
+# 31. Copy Lua runtimes from builder.
 COPY --from=builder /usr/local/bin/lua /usr/local/bin/lua
 COPY --from=builder /usr/local/bin/luac /usr/local/bin/luac
 COPY --from=builder /usr/local/bin/luarocks /usr/local/bin/luarocks
@@ -184,7 +194,7 @@ COPY --from=builder /usr/local/bin/luarocks-admin /usr/local/bin/luarocks-admin
 COPY --from=builder /usr/local/share/lua /usr/local/share/lua
 COPY --from=builder /usr/local/lib/lua /usr/local/lib/lua
 
-# 30. Copy user-space toolchains and Neovim state from builder.
+# 32. Copy user-space toolchains and Neovim state from builder.
 COPY --from=builder --chown=dev:dev /home/dev/.cargo /home/dev/.cargo
 COPY --from=builder --chown=dev:dev /home/dev/.rustup /home/dev/.rustup
 COPY --from=builder --chown=dev:dev /home/dev/.config/nvim /home/dev/.config/nvim
@@ -192,13 +202,13 @@ COPY --from=builder --chown=dev:dev /home/dev/.local/share/nvim /home/dev/.local
 COPY --from=builder --chown=dev:dev /home/dev/.cache/nvim /home/dev/.cache/nvim
 COPY --from=builder --chown=dev:dev /home/dev/.local/state/nvim /home/dev/.local/state/nvim
 
-# 31. Switch to non-root user.
+# 33. Switch to non-root user.
 USER dev
 WORKDIR /home/dev
 
-# 32. Set paths.
+# 34. Set paths.
 ENV CARGO_HOME="/home/dev/.cargo"
 ENV RUSTUP_HOME="/home/dev/.rustup"
-ENV PATH="/home/dev/.cargo/bin:/usr/local/go/bin:${PATH}"
+ENV PATH="/home/dev/.cargo/bin:/home/dev/.local/share/nvim/mason/bin:/usr/local/go/bin:${PATH}"
 
 ENTRYPOINT ["/bin/bash"]
