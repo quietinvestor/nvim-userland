@@ -1,6 +1,5 @@
 return {
 	"mfussenegger/nvim-lint",
-	event = { "BufReadPre", "BufNewFile" },
 	config = function()
 		require("lint").linters.helm = {
 			cmd = "helm",
@@ -39,9 +38,13 @@ return {
 		}
 
 		-- Create an autocommand to trigger linting
-		vim.api.nvim_create_autocmd({ "BufWritePost", "BufEnter" }, {
-			callback = function()
-				require("lint").try_lint()
+		vim.api.nvim_create_autocmd({ "BufReadPost", "BufNewFile", "BufEnter", "BufWritePost", "FileType" }, {
+			callback = function(args)
+				if vim.api.nvim_buf_is_valid(args.buf) and vim.bo[args.buf].buftype == "" then
+					vim.api.nvim_buf_call(args.buf, function()
+						require("lint").try_lint()
+					end)
+				end
 			end,
 		})
 	end,

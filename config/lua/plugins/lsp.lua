@@ -5,7 +5,6 @@ return {
 			"hrsh7th/cmp-nvim-lsp", -- LSP source for nvim-cmp
 			"williamboman/mason.nvim", -- Ensure mason loads first
 		},
-		event = { "BufReadPre", "BufNewFile" },
 		config = function()
 			local capabilities = require("cmp_nvim_lsp").default_capabilities()
 			local on_attach = require("config.keymaps")
@@ -70,7 +69,6 @@ return {
 				"jqls", -- JQ
 				"jsonls", -- JSON
 				"markdown_oxide", -- Markdown
-				"puppet", -- Puppet
 				"sqls", -- SQL
 				"terraformls", -- Terraform/HCL
 				"vtsls", -- TypeScript/JavaScript
@@ -85,7 +83,18 @@ return {
 
 			vim.lsp.enable("lua_ls")
 			vim.lsp.enable("yamlls")
+			vim.lsp.enable("puppet")
 			vim.lsp.enable(servers)
+
+			vim.api.nvim_create_autocmd("FileType", {
+				pattern = "*",
+				callback = function()
+					vim.lsp.enable("lua_ls")
+					vim.lsp.enable("yamlls")
+					vim.lsp.enable("puppet")
+					vim.lsp.enable(servers)
+				end,
+			})
 		end,
 	},
 }

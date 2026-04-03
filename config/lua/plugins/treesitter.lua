@@ -1,44 +1,17 @@
+local treesitter = require("config.treesitter")
+
 return {
 	"nvim-treesitter/nvim-treesitter",
 	config = function()
-		local configs = require("nvim-treesitter.configs")
+		require("nvim-treesitter").setup({})
 
-		configs.setup({
-			auto_install = false,
-			ensure_installed = {
-				"bash",
-				"c",
-				"cmake",
-				"css",
-				"dockerfile",
-				"go",
-				"gotmpl",
-				"hcl",
-				"helm",
-				"html",
-				"javascript",
-				"json",
-				"jq",
-				"lua",
-				"markdown",
-				"markdown_inline",
-				"puppet",
-				"python",
-				"query",
-				"sql",
-				"vim",
-				"vimdoc",
-				"yaml",
-			},
-			highlight = {
-				enable = true,
-				additional_vim_regex_highlighting = false,
-			},
-			ignore_install = {},
-			indent = { enable = true },
-			modules = {},
-			sync_install = false,
-		})
 		vim.treesitter.language.register("yaml", "github_actions")
+
+		vim.api.nvim_create_autocmd("FileType", {
+			pattern = treesitter.parsers,
+			callback = function()
+				vim.treesitter.start()
+			end,
+		})
 	end,
 }
