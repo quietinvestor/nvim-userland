@@ -122,8 +122,8 @@ RUN nvim --headless +"Lazy! restore" +qa
 RUN nvim --headless +"MasonToolsInstallSync" +qa
 
 # 22. Install Mason LSP servers.
-ENV MASON_LSP_PACKAGES="bash-language-server clangd css-lsp dockerfile-language-server gopls helm-ls html-lsp jq-lsp json-lsp lua-language-server marksman puppet-editor-services pyright sqls terraform-ls typescript-language-server yaml-language-server"
-RUN nvim --headless +"MasonInstall ${MASON_LSP_PACKAGES}" +qa
+RUN MASON_LSP_PACKAGES=$(nvim --headless +"lua io.stdout:write(table.concat(require('config.lspservers').mason, ' '))" +qa 2>/dev/null) && \
+    nvim --headless +"MasonInstall ${MASON_LSP_PACKAGES}" +qa
 
 # 23. Pull Ubuntu image for runtime.
 FROM ubuntu:24.04@sha256:67efaecc0031a612cf7bb3c863407018dbbef0a971f62032b77aa542ac8ac0d2 AS final
@@ -140,7 +140,6 @@ RUN apt-get update && \
     curl=8.5.0-2ubuntu10.8 \
     gcc=4:13.2.0-7ubuntu1 \
     git=1:2.43.0-1ubuntu7.3 \
-    gpg=2.4.4-2ubuntu17.4 \
     jq=1.7.1-3ubuntu0.24.04.1 \
     libatomic1=14.2.0-4ubuntu2~24.04.1 \
      python3=3.12.3-0ubuntu2.1 \

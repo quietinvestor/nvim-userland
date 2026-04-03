@@ -4,7 +4,7 @@ return {
 	config = function()
 		require("lint").linters_by_ft = {
 			bash = { "shellcheck" },
-			c = { "clangd" },
+			c = { "clangtidy" },
 			cmake = { "cmakelint", "cmakelang" },
 			css = { "stylelint" },
 			dockerfile = { "hadolint" },
