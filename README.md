@@ -1,4 +1,4 @@
-# nvim-userland
+# nvimpod
 
 Run a preconfigured [Neovim](https://neovim.io/doc/) environment from a rootless [podman](https://podman.io/docs) container.
 
