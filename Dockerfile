@@ -95,7 +95,8 @@ ENV PUPPET_VERSION=8.10.0
 RUN gem install --no-document puppet:${PUPPET_VERSION}
 
 # 14. Create non-root user and home directory.
-RUN useradd --create-home --shell /bin/bash dev
+RUN groupadd --gid 1001 dev && \
+    useradd --create-home --gid 1001 --uid 1001 --shell /bin/bash dev
 
 # 15. Switch to non-root user.
 USER dev
@@ -184,10 +185,7 @@ RUN curl -fsSL https://github.com/tree-sitter/tree-sitter/releases/download/v${T
     chmod 0755 /usr/local/bin/tree-sitter && \
     rm -f /tmp/tree-sitter.gz
 
-# 31. Create non-root user and home directory.
-RUN useradd --create-home --shell /bin/bash dev
-
-# 32. Copy system toolchains from builder.
+# 31. Copy system toolchains from builder.
 COPY --from=builder /usr/local/go /usr/local/go
 COPY --from=builder /usr/local/bin/helm /usr/local/bin/helm
 COPY --from=builder /usr/local/bin/node /usr/local/bin/node
@@ -198,13 +196,17 @@ RUN ln -s /opt/nvim/bin/nvim /usr/local/bin/nvim
 RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm && \
     ln -s /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
 
-# 33. Copy Lua runtimes from builder.
+# 32. Copy Lua runtimes from builder.
 COPY --from=builder /usr/local/bin/lua /usr/local/bin/lua
 COPY --from=builder /usr/local/bin/luac /usr/local/bin/luac
 COPY --from=builder /usr/local/bin/luarocks /usr/local/bin/luarocks
 COPY --from=builder /usr/local/bin/luarocks-admin /usr/local/bin/luarocks-admin
 COPY --from=builder /usr/local/share/lua /usr/local/share/lua
 COPY --from=builder /usr/local/lib/lua /usr/local/lib/lua
+
+# 33. Create non-root user and home directory.
+RUN groupadd --gid 1001 dev && \
+    useradd --create-home --gid 1001 --uid 1001 --shell /bin/bash dev
 
 # 34. Copy user-space toolchains and Neovim state from builder.
 COPY --from=builder --chown=dev:dev /home/dev/.cargo /home/dev/.cargo
@@ -216,7 +218,8 @@ COPY --from=builder --chown=dev:dev /home/dev/.local/state/nvim /home/dev/.local
 
 # 35. Switch to non-root user.
 USER dev
-WORKDIR /home/dev
+RUN mkdir -p /home/dev/projects
+WORKDIR /home/dev/projects
 
 # 36. Set paths.
 ENV CARGO_HOME="/home/dev/.cargo"
