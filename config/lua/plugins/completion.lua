@@ -14,7 +14,7 @@ return {
 			},
 			keymap = {
 				preset = "default",
-				["<C-d>"] = { "scroll_documentation_up", "fallback" },
+				["<C-b>"] = { "scroll_documentation_up", "fallback" },
 				["<C-f>"] = { "scroll_documentation_down", "fallback" },
 				["<C-Space>"] = { "show", "show_documentation", "hide_documentation" },
 				["<CR>"] = { "accept", "fallback" },

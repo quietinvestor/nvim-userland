@@ -152,6 +152,7 @@ RUN apt-get update && \
     apt-get install --no-install-recommends -y \
     clang-tidy=1:18.0-59~exp2 \
     curl=8.5.0-2ubuntu10.8 \
+    fd-find=9.0.0-1 \
     gcc=4:13.2.0-7ubuntu1 \
     git=1:2.43.0-1ubuntu7.3 \
     jq=1.7.1-3ubuntu0.24.04.1 \
@@ -166,6 +167,7 @@ RUN apt-get update && \
      unzip=6.0-28ubuntu4.1 \
      wget=1.21.4-1ubuntu4.1 \
      xdg-utils=1.1.3-4.1ubuntu3 && \
+    ln -s /usr/bin/fdfind /usr/local/bin/fd && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
