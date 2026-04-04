@@ -13,3 +13,7 @@ vim.bo.tabstop = 4
 
 -- Enable true colors
 vim.opt.termguicolors = true
+
+-- Sync yanks with the host clipboard
+vim.g.clipboard = "osc52"
+vim.opt.clipboard = "unnamedplus"
