@@ -1,7 +1,7 @@
 .PHONY: build down nvim rebuild shell up
 
 CONTAINER := nvim-nvim
-IMAGE := localhost/nvim:0.1.0
+IMAGE := localhost/nvim:0.1.1
 MANIFEST := podman/nvim.yaml
 ROOT_DIR := $(CURDIR)
 
