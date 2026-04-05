@@ -15,5 +15,20 @@ vim.bo.tabstop = 4
 vim.opt.termguicolors = true
 
 -- Sync yanks with the host clipboard
-vim.g.clipboard = "osc52"
+if vim.fn.executable("wl-copy") == 1 and os.getenv("WAYLAND_DISPLAY") then
+	vim.g.clipboard = {
+		name = "wl-clipboard",
+		copy = {
+			["+"] = "wl-copy --type text/plain",
+			["*"] = "wl-copy --primary --type text/plain",
+		},
+		paste = {
+			["+"] = "wl-paste --no-newline",
+			["*"] = "wl-paste --no-newline --primary",
+		},
+		cache_enabled = 0,
+	}
+else
+	vim.g.clipboard = "osc52"
+end
 vim.opt.clipboard = "unnamedplus"

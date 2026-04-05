@@ -9,7 +9,7 @@ build:
 	podman build --tag $(IMAGE) .
 
 down:
-	ROOT_DIR=$(ROOT_DIR) envsubst < $(MANIFEST) | podman kube down -
+	ROOT_DIR=$(ROOT_DIR) WAYLAND_DISPLAY=$(WAYLAND_DISPLAY) XDG_RUNTIME_DIR=$(XDG_RUNTIME_DIR) envsubst < $(MANIFEST) | podman kube down -
 
 nvim:
 	podman exec --interactive --tty $(CONTAINER) bash -lc 'exec nvim'
@@ -21,4 +21,4 @@ shell:
 	podman exec --interactive --tty $(CONTAINER) bash
 
 up:
-	ROOT_DIR=$(ROOT_DIR) envsubst < $(MANIFEST) | podman kube play --replace --userns keep-id:uid=1001,gid=1001 -
+	ROOT_DIR=$(ROOT_DIR) WAYLAND_DISPLAY=$(WAYLAND_DISPLAY) XDG_RUNTIME_DIR=$(XDG_RUNTIME_DIR) envsubst < $(MANIFEST) | podman kube play --replace --userns keep-id:uid=1001,gid=1001 -

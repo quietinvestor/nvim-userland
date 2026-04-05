@@ -163,10 +163,11 @@ RUN apt-get update && \
      python3-pip=24.0+dfsg-1ubuntu1.3 \
      python3-venv=3.12.3-0ubuntu2.1 \
      ripgrep=14.1.0-1 \
-     ruby-full=1:3.2~ubuntu1 \
-     unzip=6.0-28ubuntu4.1 \
-     wget=1.21.4-1ubuntu4.1 \
-     xdg-utils=1.1.3-4.1ubuntu3 && \
+    ruby-full=1:3.2~ubuntu1 \
+    unzip=6.0-28ubuntu4.1 \
+    wget=1.21.4-1ubuntu4.1 \
+    wl-clipboard=2.2.1-1build1 \
+    xdg-utils=1.1.3-4.1ubuntu3 && \
     ln -s /usr/bin/fdfind /usr/local/bin/fd && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*

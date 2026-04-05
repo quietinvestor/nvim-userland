@@ -6,6 +6,11 @@ spec:
   containers:
     - image: localhost/nvim:0.1.0
       name: nvim
+      env:
+        - name: WAYLAND_DISPLAY
+          value: ${WAYLAND_DISPLAY}
+        - name: XDG_RUNTIME_DIR
+          value: /tmp
       resources:
         limits:
           cpu: "1"
@@ -23,10 +28,16 @@ spec:
       stdin: true
       tty: true
       volumeMounts:
+        - mountPath: /tmp/${WAYLAND_DISPLAY}
+          name: wayland
         - mountPath: /home/dev/projects
           name: projects
   restartPolicy: Never
   volumes:
+    - hostPath:
+        path: ${XDG_RUNTIME_DIR}/${WAYLAND_DISPLAY}
+        type: Socket
+      name: wayland
     - hostPath:
         path: ${ROOT_DIR}/volumes/projects
         type: DirectoryOrCreate
